@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Vault</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #0f172a, #111827);
+  color: white;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+}
+
+.navbar nav {
+  display: flex;
+  gap: 20px;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+}
+
+.hero {
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 40px;
+}
+
+.hero-content {
+  max-width: 700px;
+}
+
+.hero h2 {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  margin-bottom: 30px;
+  opacity: 0.8;
+}
+
+button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  background: #38bdf8;
+  color: white;
+  cursor: pointer;
+}
+
+.cards-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 50px;
+}
+
+.card {
+  padding: 30px;
+  border-radius: 20px;
+}
+
+.glass {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+}
+
+.page-header {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.timeline {
+  max-width: 900px;
+  margin: auto;
+  padding: 40px 20px;
+}
+
+.timeline-item {
+  padding: 20px;
+  margin-bottom: 20px;
+  border-left: 4px solid #38bdf8;
+  background: rgba(255,255,255,0.05);
+}
+
+.lab-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 40px;
+}
+
+.lab-box {
+  padding: 30px;
+}
+
+.palette {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.color-box {
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
+}
+
+.vault-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 30px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 140px;
+  padding: 20px;
+  border-radius: 15px;
+  border: none;
+  margin-bottom: 20px;
+}
+
+.memory-card {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 15px;
+  background: rgba(255,255,255,0.08);
+}
+
+footer {
+  text-align: center;
+  padding: 40px;
+  opacity: 0.6;
+}
+
+@media(max-width:768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .hero h2 {
+    font-size: 2.5rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<header class="navbar">
+  <h1>Echo Atlas</h1>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="timeline.html">Timeline</a>
+    <a href="lab.html">Lab</a>
+    <a href="vault.html">Vault</a>
+  </nav>
+</header>
+
+<section class="page-header">
+  <h2>Memory Vault</h2>
+  <p>Salva note direttamente nel browser.</p>
+</section>
+
+<section class="vault-container glass">
+
+  <textarea id="memoryInput" placeholder="Scrivi un pensiero..."></textarea>
+
+  <button id="saveMemory">Salva Memoria</button>
+
+  <div id="memoryList"></div>
+
+</section>
+
+<footer>
+  <p>Memory Vault</p>
+</footer>
+
+<script>
+const input = document.getElementById("memoryInput");
+const saveBtn = document.getElementById("saveMemory");
+const list = document.getElementById("memoryList");
+
+function loadMemories() {
+  const memories = JSON.parse(localStorage.getItem("echoMemories")) || [];
+
+  list.innerHTML = "";
+
+  memories.forEach((memory, index) => {
+    const div = document.createElement("div");
+
+    div.classList.add("memory-card");
+
+    div.innerHTML = `
+      <p>${memory}</p>
+      <button onclick="deleteMemory(${index})">Elimina</button>
+    `;
+
+    list.appendChild(div);
+  });
+}
+
+function saveMemory() {
+  const text = input.value.trim();
+
+  if (!text) return;
+
+  const memories = JSON.parse(localStorage.getItem("echoMemories")) || [];
+
+  memories.push(text);
+
+  localStorage.setItem("echoMemories", JSON.stringify(memories));
+
+  input.value = "";
+
+  loadMemories();
+}
+
+function deleteMemory(index) {
+  const memories = JSON.parse(localStorage.getItem("echoMemories")) || [];
+
+  memories.splice(index, 1);
+
+  localStorage.setItem("echoMemories", JSON.stringify(memories));
+
+  loadMemories();
+}
+
+saveBtn.addEventListener("click", saveMemory);
+
+loadMemories();
+</script>
+</body>
+</html>
